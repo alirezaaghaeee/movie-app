@@ -2,6 +2,18 @@
   <div class="home">
     <!-- hero -->
     <Hero />
+    <!-- search -->
+    <div class="search container">
+      <input
+        type="text"
+        v-model.lazy="searchInput"
+        placeholder="Search"
+        @keyup.enter="search"
+      />
+      <button @click="Clearsearch" v-show="searchInput!==''" class="button">
+        Clear Search
+      </button>
+    </div>
     <!-- movies -->
     <div class="container movies">
       <div class="movies-grid" id="movie-grid">
@@ -47,6 +59,7 @@ export default {
   data() {
     return {
       movies: [],
+      searchInput: '',
     }
   },
   async fetch() {
@@ -62,7 +75,24 @@ export default {
         this.movies.push(movie)
       })
     },
+    async search() {
+      this.movies = []
+      const data = axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=def5785d32d90d07ffbece2bba421a78&language=en-US&query=${this.searchInput}&page=1&include_adult=false`
+      )
+      const result = await data
+      result.data.results.forEach((movie) => {
+        this.movies.push(movie)
+      })
+    },
+ async  Clearsearch() {
+      this.searchInput = '';
+      this.movies = [];
+     await this.getmovie();
+      
+    },
   },
+   
 }
 </script>
 
